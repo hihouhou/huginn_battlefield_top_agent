@@ -3,11 +3,29 @@ module Agents
     include FormConfigurable
     can_dry_run!
     default_schedule 'every_1d'
+    description do
+      <<-MD
 
-    description <<-MD
       This agent fetch stats from user's informations and creates a top score for R6 Games
 
       `debug` is used for verbose mode.
+      MD
+    end
+
+    event_description <<-MD
+      Events look like this:
+
+          {
+            "type": "longestHeadshot",
+            "game": "bf4",
+            "classement": {
+              "XXXXXXX": "616.9",
+              "XXXXXXX": "323.12",
+              "XXXXXXXX": "314.32",
+              "XXXXXXXXXXX": "90.51",
+              "XXXXXXXX": "69.45"
+            }
+          }
     MD
 
     def default_options
