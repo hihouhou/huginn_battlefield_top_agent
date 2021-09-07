@@ -21,7 +21,7 @@ module Agents
     form_configurable :debug, type: :boolean
     form_configurable :changes_only, type: :boolean
     form_configurable :top_type, type: :array, values: ['longestHeadshot', 'headshots', 'deaths']
-    form_configurable :bf_version, type: :array, values: ['bf4', 'bf5']
+    form_configurable :bf_version, type: :array, values: ['bf3', 'bf4']
 
     def validate_options
       unless options['users'].present?
@@ -54,9 +54,14 @@ module Agents
       users_array = users.split(" ")
       users_array.each do |item, index|
           json = fetch_id(item)
-          log "test #{json}"
           username  = json[:username]
-          nbr_suicide = json['data']['generalStats'][interpolated['top_type']]
+          case interpolated['bf_version']
+          when "bf3"
+            nbr_suicide = json['data']['overviewStats'][interpolated['top_type']]
+          when "bf4"
+            nbr_suicide = json['data']['generalStats'][interpolated['top_type']]
+          when bf2042
+          end
           if interpolated['debug'] == 'true'
             log "#{username} #{nbr_suicide}"
           end
@@ -84,7 +89,7 @@ module Agents
     end
 
     def fetch_id(id)
-      url = 'https://battlelog.battlefield.com/' + interpolated['bf_version'] +'/user/overviewBoxStats/' + id + '/'
+      url = 'https://battlelog.battlefield.com/' + "#{interpolated['bf_version']}" + '/user/overviewBoxStats/' + id + '/'
       uri = URI.parse(url)
       request = Net::HTTP::Get.new(uri)
       request["Connection"] = "keep-alive"
@@ -116,7 +121,13 @@ module Agents
     end
 
     def fetch(user,username)
-      url = 'https://battlelog.battlefield.com/' + interpolated['bf_version'] + '/warsawdetailedstatspopulate/' + user + '/1/'
+      case interpolated['bf_version']
+      when "bf3"
+        url = 'https://battlelog.battlefield.com/' + interpolated['bf_version'] + '/overviewPopulateStats/' + user + '/None/1/'
+      when "bf4"
+        url = 'https://battlelog.battlefield.com/' + interpolated['bf_version'] + '/warsawdetailedstatspopulate/' + user + '/1/'
+      when bf2042
+      end
       uri = URI.parse(url)
       request = Net::HTTP::Get.new(uri)
       request["Connection"] = "keep-alive"
