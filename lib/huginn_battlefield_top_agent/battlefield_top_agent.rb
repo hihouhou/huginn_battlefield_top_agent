@@ -38,7 +38,7 @@ module Agents
     form_configurable :users, type: :string
     form_configurable :debug, type: :boolean
     form_configurable :changes_only, type: :boolean
-    form_configurable :top_type, type: :array, values: ['longestHeadshot', 'headshots', 'deaths']
+    form_configurable :top_type, type: :array, values: ['longestHeadshot', 'headshots', 'deaths', 'heals']
     form_configurable :bf_version, type: :array, values: ['bf3', 'bf4']
 
     def validate_options
